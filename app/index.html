@@ -1,46 +1,78 @@
-<!doctype html>
-<html lang="en" data-theme="night">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sunset Platinum — GTA VI Trophy Guide &amp; Tracker</title>
-<meta name="description" content="An offline guide and tracker for all 55 PlayStation 5 trophies of Grand Theft Auto VI: checklist, roadmap, missables and a guide to each, with sources.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23ff6b4a'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%230f1218'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <header class="masthead">
-  <div class="brand">
-    <p class="kicker">Grand Theft Auto VI &middot; PlayStation 5</p>
-    <h1>Sunset Platinum</h1>
-    <p class="tagline">The offline trophy guide &amp; tracker for Leonida &mdash; all 55 trophies, their official names, descriptions and grades, a roadmap to the platinum, and a guide to each that cites its sources.</p>
-  </div>
-  <div class="progress-card" id="progressCard" aria-label="Overall progress">
-    <svg class="ring" viewBox="0 0 120 120" width="104" height="104" role="img" aria-label="Progress ring">
-      <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
-      <circle class="ring-fg" id="ringFg" cx="60" cy="60" r="52"></circle>
-    </svg>
-    <div class="progress-text">
-      <strong id="progressCount">0 / 55</strong>
-      <span id="progressLabel">trophies earned</span>
-      <span class="grade-counts" id="gradeCounts"></span>
+  <div class="masthead-inner">
+    <div>
+      <h1>Sunset Platinum</h1>
+      <p class="tagline">The offline guide &amp; tracker for all 55 Grand Theft Auto VI trophies on PlayStation 5.</p>
+      <p class="official-line">55 trophies · 1 platinum · 2 gold · 6 silver · 46 bronze · 28 hidden on PlayStation until earned</p>
+    </div>
+    <div class="progress-card" id="progress-card">
+      <div class="big-count"><span id="earned-count">0</span><span class="of"> / 55 earned</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <p class="progress-note" id="progress-note">Your progress is saved in this browser only.</p>
     </div>
   </div>
 </header>
 
-<nav class="tabs" aria-label="Guide sections">
-  <button type="button" data-route="tracker" class="tab active">Tracker</button>
-  <button type="button" data-route="roadmap" class="tab">Roadmap</button>
-  <button type="button" data-route="missables" class="tab">Missables <span class="pill" id="missablePill">8</span></button>
-  <button type="button" data-route="next" class="tab">Next up</button>
-  <button type="button" data-route="settings" class="tab">Settings</button>
+<nav class="tabs" id="tabs" aria-label="Sections">
+  <button type="button" data-tab="guide" class="active">Guide</button>
+  <button type="button" data-tab="roadmap">Roadmap</button>
+  <button type="button" data-tab="missables">Missables <span class="count-pill" id="missable-count">8</span></button>
+  <button type="button" data-tab="nextup">Next up</button>
 </nav>
 
-<main id="view" class="view"></main>
+<section class="controls" aria-label="Filters and settings">
+  <input type="search" id="search" placeholder="Search a trophy by name…" aria-label="Search trophies">
+  <div class="chip-row" id="kind-chips" role="group" aria-label="Filter by kind"></div>
+  <select id="grade-filter" aria-label="Filter by grade">
+    <option value="all">All grades</option>
+    <option value="platinum">Platinum</option>
+    <option value="gold">Gold</option>
+    <option value="silver">Silver</option>
+    <option value="bronze">Bronze</option>
+  </select>
+  <label class="check"><input type="checkbox" id="earned-only"> Earned only</label>
+  <label class="check spoiler-check"><input type="checkbox" id="spoiler-toggle" checked> Spoiler mode</label>
+  <button type="button" id="export-btn">Export progress</button>
+  <button type="button" id="import-btn">Import progress</button>
+  <input type="file" id="import-file" accept="application/json,.json" hidden>
+</section>
 
-<footer class="foot">
-  <p>Names, descriptions and grades are the official PlayStation list, as published on Exophase and PSNProfiles. Guides are our own words; a guide that repeats the trophy's description adds nothing, so each one says what to do and where its facts come from. No Rockstar artwork, no network: this guide runs entirely from its own files.</p>
-  <p class="foot-links"><a href="https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/">Exophase — GTA VI trophies</a> &middot; <a href="https://psnprofiles.com/trophies/43531-grand-theft-auto-vi">PSNProfiles — GTA VI trophies</a></p>
+<main class="layout">
+  <section class="panel list-panel">
+    <div id="tab-guide" class="tab-page active">
+      <p class="hint">Tick a trophy when you earn it. Click a row to read its guide and its sources.</p>
+      <ul class="trophy-list" id="trophy-list"></ul>
+      <p class="empty" id="list-empty" hidden>No trophies match these filters.</p>
+    </div>
+    <div id="tab-roadmap" class="tab-page">
+      <p class="hint">Seven stages, in story order, from the opening mission to the platinum. Each stage lists its trophies — finish a stage, move to the next.</p>
+      <div id="roadmap"></div>
+    </div>
+    <div id="tab-missables" class="tab-page">
+      <p class="hint">Eight trophies flagged from the official descriptions as easy to miss. Each flag says why — and each says plainly that it is our reading of the description, not yet confirmed in the game. Do it when you see it.</p>
+      <div id="missable-list"></div>
+    </div>
+    <div id="tab-nextup" class="tab-page">
+      <p class="hint">What to do next, in roadmap order: the earliest unearned trophies first.</p>
+      <ol class="next-list" id="next-list"></ol>
+    </div>
+  </section>
+  <aside class="panel detail-panel" id="detail-panel" aria-live="polite"></aside>
+</main>
+
+<footer class="colophon">
+  <p>Names, descriptions and grades are PlayStation's own words, as Exophase and PSNProfiles list them (verified 19 Nov 2026). Counts are PSN's progress targets, via PSNProfiles. Every guide is written for this entry, in our own words, from the official descriptions — the game is a day old and no complete guide exists yet, so where a place is not pinned down we say so instead of inventing one.</p>
+  <p>No Rockstar Games logo, artwork or game screenshot is used anywhere in this guide. The app loads nothing over the network and works with the network off.</p>
 </footer>
 
 <script type="module" src="js/main.js"></script>
